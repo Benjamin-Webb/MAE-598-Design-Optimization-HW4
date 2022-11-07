@@ -45,9 +45,23 @@ def NewtonRalphson(x):
 		S[j] = S[j-1] - np.linalg.inv(dhds)*h
 
 		# Update constraints
-		h = contraints([[S[0, j]], [S[1, j]], x[2]])
+		h = contraints(np.array([[S[0, j]], [S[1, j]], x[2]], dtype=np.single))
 
 		# Update iteration Counter
 		j += 1
 
 	return S
+
+def redGrad(x):
+	# Calculate reduced gradient
+	# x: 3x1 vector
+
+	pf_pd = np.array(2.0*x[2], dtype=np.single)
+	pf_ps = np.array([[2.0*x[0]], 2.0*x[1]], dtype=np.single)
+	ph_ps = np.linalg.inv(np.array([[0.5*x[0], 0.4*x[1]], [1.0, 1.0]], dtype=np.single))
+	ph_pd = np.array([[0.08*x[2]], [-1.0]], dtype=np.single)
+
+	return pf_pd - pf_ps*ph_ps*ph_pd
+
+def linesearch(x):
+	# perform linesearch
