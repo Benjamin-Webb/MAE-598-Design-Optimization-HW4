@@ -75,9 +75,9 @@ def linesearch(x, dfdd):
 	# perform linesearch
 
 	# Define parameters
-	alpha = 0.1
+	alpha = 1.0
 	b = 0.5
-	t = 0.1
+	t = 0.3
 	f = np.zeros((100, 1), dtype=np.single)
 	phi = np.zeros((100, 1), dtype=np.single)
 	j = np.uint8(0)
@@ -109,10 +109,9 @@ def linesearch(x, dfdd):
 if __name__ == '__main__':
 
 	# Find initial point
-	x = np.zeros((3, 10000), dtype=np.single)
-	x[2, 0] = 3.0                               # Initial guess of decision variable
+	x = np.zeros((3, 1000), dtype=np.single)
 	x[0, 0] = 1.0
-	x[1, 0] = 2.0
+	x[1, 0] = -1.0
 
 	# Initialize/starting point
 	x[:, 0] = NewtonRalphson(x[:, 0]).reshape(-1, )
@@ -144,6 +143,10 @@ if __name__ == '__main__':
 
 		# Update GRG and iteration counter
 		dfdd = redGrad(x[0:3, k+1])
+
+		dk_old = dk_new
+		Sk_old = Sk_new
+
 		k += 1
 
 	print('x1: %.3f' % (x[0, k]))
