@@ -69,16 +69,15 @@ def redGrad(x):
 	ph_ps = np.linalg.inv(np.asarray([[0.5*x[0], 0.4*x[1]], [1.0, 1.0]], dtype=np.single)).reshape(2, 2)
 	ph_pd = np.asarray([[0.08*x[2]], [-1.0]], dtype=np.single).reshape(2, 1)
 
-	test = pf_pd - pf_ps @ ph_ps @ ph_pd
 	return pf_pd - pf_ps @ ph_ps @ ph_pd
 
 def linesearch(x, dfdd):
 	# perform linesearch
 
 	# Define parameters
-	alpha = 1.0
+	alpha = 0.1
 	b = 0.5
-	t = 0.3
+	t = 0.1
 	f = np.zeros((100, 1), dtype=np.single)
 	phi = np.zeros((100, 1), dtype=np.single)
 	j = np.uint8(0)
@@ -93,12 +92,12 @@ def linesearch(x, dfdd):
 
 		# Determine inputs for f(alpha)
 		dk_step = x[2] - alpha*dfdd
-		sk_step = x[0:2].reshape(2, 1) + alpha*(ph_ps@ph_pd*dfdd)
+		sk_step = x[0:2].reshape(2, 1) + alpha*(ph_ps@ph_pd@dfdd)
 
 		f[j] = minFun(np.vstack((sk_step, dk_step)))
 
 		# Determine phi(alpha)
-		phi[j] = minFun(x) - alpha*t*dfdd
+		phi[j] = minFun(x) - alpha * t * dfdd**2
 
 		# Update alpha
 		if f[j] > phi[j]:
@@ -110,7 +109,7 @@ def linesearch(x, dfdd):
 if __name__ == '__main__':
 
 	# Find initial point
-	x = np.zeros((3, 1000), dtype=np.single)
+	x = np.zeros((3, 10000), dtype=np.single)
 	x[2, 0] = 3.0                               # Initial guess of decision variable
 	x[0, 0] = 1.0
 	x[1, 0] = 2.0
